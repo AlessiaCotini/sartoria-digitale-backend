@@ -1,0 +1,6 @@
+package alessia.cotini.sartoria_digitale_backend.enums;
+
+public enum Genere {
+    UOMO,
+    DONNA
+}
