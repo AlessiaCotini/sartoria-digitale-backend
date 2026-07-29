@@ -5,6 +5,7 @@ import alessia.cotini.sartoria_digitale_backend.eccezioni.NotFoundException;
 import alessia.cotini.sartoria_digitale_backend.entities.Misure;
 import alessia.cotini.sartoria_digitale_backend.entities.Utente;
 import alessia.cotini.sartoria_digitale_backend.enums.Ruolo;
+import alessia.cotini.sartoria_digitale_backend.payloads.CreazioneUtenteRequest;
 import alessia.cotini.sartoria_digitale_backend.payloads.RegistrazioneClienteRequest;
 import alessia.cotini.sartoria_digitale_backend.repositories.MisureRepository;
 import alessia.cotini.sartoria_digitale_backend.repositories.UtenteRepository;
@@ -68,5 +69,20 @@ public class UtenteService {
         misureRepository.save(misure);
 
         return utente;
+    }
+    public Utente creaConRuolo(CreazioneUtenteRequest request, Ruolo ruolo, Utente registratoDa) {
+        if (utenteRepository.existsByEmail(request.email())) {
+            throw new BadRequestException("Email già registrata: " + request.email());
+        }
+
+        Utente utente = new Utente();
+        utente.setNome(request.nome());
+        utente.setCognome(request.cognome());
+        utente.setEmail(request.email());
+        utente.setPassword(passwordEncoder.encode(request.password()));
+        utente.setRuolo(ruolo);
+        utente.setRegistratoDa(registratoDa);
+
+        return utenteRepository.save(utente);
     }
 }
