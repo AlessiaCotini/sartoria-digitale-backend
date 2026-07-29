@@ -7,8 +7,11 @@ import java.util.UUID;
 
 public record OrdineResponse(
         UUID id,
+        boolean clienteRegistrato,
         UUID clienteId,
-        String clienteNome,
+        UUID clienteNegozioId,
+        String nomeCliente,
+        String telefonoCliente,
         UUID capoId,
         String capoNome,
         UUID materialeId,

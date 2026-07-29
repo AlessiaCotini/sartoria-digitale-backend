@@ -23,9 +23,13 @@ public class Ordine {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Utente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_negozio_id")
+    private ClienteNegozio clienteNegozio;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "capo_id")
@@ -35,11 +39,13 @@ public class Ordine {
     @JoinColumn(name = "materiale_id")
     private Materiale materiale;
 
-    private String colore;
-
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "misure_id")
     private Misure misure;
+
+    private String colore;
+
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -22,13 +22,20 @@ public class Appuntamento {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Utente cliente;
 
-    @ManyToOne(optional = false)
+    //solo se il cliente è di negozio
+    @ManyToOne
+    @JoinColumn(name = "cliente_negozio_id")
+    private ClienteNegozio clienteNegozio;
+
+    // vuoto finché nessuna sarta lo conferma/prende in carico
+    @ManyToOne
     @JoinColumn(name = "sarta_id")
     private Utente sarta;
+
 
     @Column(nullable = false)
     private LocalDateTime dataOra;
