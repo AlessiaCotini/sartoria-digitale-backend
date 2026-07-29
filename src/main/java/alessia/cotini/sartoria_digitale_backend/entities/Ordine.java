@@ -35,12 +35,8 @@ public class Ordine {
     @JoinColumn(name = "materiale_id")
     private Materiale materiale;
 
-    // nome del colore scelto tra quelli del materiale (es. "Bordeaux")
     private String colore;
 
-    // le misure del cliente al momento dell'ordine — riferimento diretto per ora,
-    // valutiamo più avanti se serve "fotografarle" per non farle cambiare
-    // retroattivamente se il cliente aggiorna il profilo dopo
     @ManyToOne(optional = false)
     @JoinColumn(name = "misure_id")
     private Misure misure;
@@ -49,7 +45,7 @@ public class Ordine {
     @Column(nullable = false)
     private StatoOrdine stato;
 
-    // sarta o sottoposto a cui è assegnato l'ordine (può essere nullo finché non assegnato)
+
     @ManyToOne
     @JoinColumn(name = "assegnato_a_id")
     private Utente assegnatoA;
