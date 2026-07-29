@@ -1,5 +1,6 @@
 package alessia.cotini.sartoria_digitale_backend.controllers;
 
+import alessia.cotini.sartoria_digitale_backend.eccezioni.NotFoundException;
 import alessia.cotini.sartoria_digitale_backend.entities.Capo;
 import alessia.cotini.sartoria_digitale_backend.payloads.CreazioneCapoRequest;
 import alessia.cotini.sartoria_digitale_backend.repositories.CapoRepository;
@@ -9,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/capi")
@@ -39,5 +41,10 @@ public class CapoController {
         capo.setInEvidenza(request.inEvidenza());
         capo.setImmagine(request.immagine());
         return capoRepository.save(capo);
+    }
+    @GetMapping("/{id}")
+    public Capo uno(@PathVariable UUID id) {
+        return capoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Capo non trovato con id " + id));
     }
 }
