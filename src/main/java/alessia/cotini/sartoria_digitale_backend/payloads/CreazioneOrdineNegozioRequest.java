@@ -7,10 +7,12 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record CreazioneOrdineNegozioRequest(
-        @NotBlank String nomeCliente,
-        @NotBlank String cognomeCliente,
-        @NotBlank String telefonoCliente,
-        @NotNull @Valid MisureRequest misure,
+        UUID clienteId,
+        UUID clienteNegozioId,
+        String nomeClienteNuovo,
+        String cognomeClienteNuovo,
+        String telefonoClienteNuovo,
+        @Valid MisureRequest misureClienteNuovo,
         @NotNull UUID capoId,
         @NotNull UUID materialeId,
         @NotBlank String colore

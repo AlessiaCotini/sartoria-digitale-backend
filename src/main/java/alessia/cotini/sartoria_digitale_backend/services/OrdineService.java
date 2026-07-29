@@ -20,15 +20,17 @@ public class OrdineService {
     private final MisureRepository misureRepository;
     private final ClienteNegozioRepository clienteNegozioRepository;
     private final PagamentoService pagamentoService;
+    private final UtenteRepository utenteRepository;
 
     public OrdineService(OrdineRepository ordineRepository, CapoRepository capoRepository,
-                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService) {
+                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService, UtenteRepository utenteRepository) {
         this.ordineRepository = ordineRepository;
         this.capoRepository = capoRepository;
         this.materialeRepository = materialeRepository;
         this.misureRepository = misureRepository;
         this.clienteNegozioRepository = clienteNegozioRepository;
         this.pagamentoService = pagamentoService;
+        this.utenteRepository = utenteRepository;
     }
 
     public Ordine creaOrdine(CreazioneOrdineRequest request, Utente cliente) {
@@ -88,24 +90,46 @@ public class OrdineService {
         Materiale materiale = materialeRepository.findById(request.materialeId())
                 .orElseThrow(() -> new NotFoundException("Materiale non trovato con id " + request.materialeId()));
 
-        DatiMisure misure = new DatiMisure(
-                request.misure().altezza(), request.misure().peso(), request.misure().torace(),
-                request.misure().vita(), request.misure().fianchi(), request.misure().spalle(),
-                request.misure().manica(), request.misure().gamba(), request.misure().collo(),
-                request.misure().bicipite(), request.misure().polso(), request.misure().busto(),
-                request.misure().coscia(), request.misure().ginocchio(), request.misure().caviglia()
-        );
-
-        ClienteNegozio clienteNegozio = new ClienteNegozio();
-        clienteNegozio.setNome(request.nomeCliente());
-        clienteNegozio.setCognome(request.cognomeCliente());
-        clienteNegozio.setTelefono(request.telefonoCliente());
-        clienteNegozio.setMisure(misure);
-        clienteNegozio.setRegistratoDa(sarta);
-        clienteNegozio = clienteNegozioRepository.save(clienteNegozio);
-
         Ordine ordine = new Ordine();
-        ordine.setClienteNegozio(clienteNegozio);
+
+        if (request.clienteId() != null) {
+            Utente cliente = utenteRepository.findById(request.clienteId())
+                    .orElseThrow(() -> new NotFoundException("Cliente non trovato con id " + request.clienteId()));
+            Misure misure = misureRepository.findByUtenteId(cliente.getId())
+                    .orElseThrow(() -> new BadRequestException("Nessuna misura trovata per questo cliente"));
+            ordine.setCliente(cliente);
+            ordine.setMisure(misure);
+        } else if (request.clienteNegozioId() != null) {
+            ClienteNegozio clienteNegozio = clienteNegozioRepository.findById(request.clienteNegozioId())
+                    .orElseThrow(() -> new NotFoundException(
+                            "Cliente di negozio non trovato con id " + request.clienteNegozioId()));
+            ordine.setClienteNegozio(clienteNegozio);
+        } else if (request.nomeClienteNuovo() != null && request.cognomeClienteNuovo() != null
+                && request.telefonoClienteNuovo() != null && request.misureClienteNuovo() != null) {
+            DatiMisure misure = new DatiMisure(
+                    request.misureClienteNuovo().altezza(), request.misureClienteNuovo().peso(),
+                    request.misureClienteNuovo().torace(), request.misureClienteNuovo().vita(),
+                    request.misureClienteNuovo().fianchi(), request.misureClienteNuovo().spalle(),
+                    request.misureClienteNuovo().manica(), request.misureClienteNuovo().gamba(),
+                    request.misureClienteNuovo().collo(), request.misureClienteNuovo().bicipite(),
+                    request.misureClienteNuovo().polso(), request.misureClienteNuovo().busto(),
+                    request.misureClienteNuovo().coscia(), request.misureClienteNuovo().ginocchio(),
+                    request.misureClienteNuovo().caviglia()
+            );
+
+            ClienteNegozio nuovo = new ClienteNegozio();
+            nuovo.setNome(request.nomeClienteNuovo());
+            nuovo.setCognome(request.cognomeClienteNuovo());
+            nuovo.setTelefono(request.telefonoClienteNuovo());
+            nuovo.setMisure(misure);
+            nuovo.setRegistratoDa(sarta);
+            nuovo = clienteNegozioRepository.save(nuovo);
+            ordine.setClienteNegozio(nuovo);
+        } else {
+            throw new BadRequestException(
+                    "Serve un cliente registrato, di negozio esistente, o i dati per crearne uno nuovo");
+        }
+
         ordine.setCapo(capo);
         ordine.setMateriale(materiale);
         ordine.setColore(request.colore());
