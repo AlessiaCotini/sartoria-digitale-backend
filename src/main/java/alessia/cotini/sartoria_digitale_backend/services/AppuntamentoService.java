@@ -35,6 +35,7 @@ public class AppuntamentoService {
         Appuntamento appuntamento = new Appuntamento();
         appuntamento.setCliente(cliente);
         appuntamento.setDataOra(request.dataOra());
+        appuntamento.setDataOraFine(request.dataOraFine());
         appuntamento.setNote(request.note());
         appuntamento.setStato(StatoAppuntamento.RICHIESTO);
         return appuntamentoRepository.save(appuntamento);
@@ -57,6 +58,7 @@ public class AppuntamentoService {
         }
         appuntamento.setSarta(sarta);
         appuntamento.setDataOra(request.dataOra());
+        appuntamento.setDataOraFine(request.dataOraFine());
         appuntamento.setNote(request.note());
         appuntamento.setStato(StatoAppuntamento.CONFERMATO);
         return appuntamentoRepository.save(appuntamento);
@@ -65,6 +67,7 @@ public class AppuntamentoService {
     public Appuntamento modifica(UUID id, ModificaAppuntamentoRequest request, Utente sarta) {
         Appuntamento appuntamento = trovaPerId(id);
         if (request.dataOra() != null) appuntamento.setDataOra(request.dataOra());
+        if (request.dataOraFine() != null) appuntamento.setDataOraFine(request.dataOraFine());
         if (request.stato() != null) appuntamento.setStato(request.stato());
         if (request.note() != null) appuntamento.setNote(request.note());
         if (appuntamento.getSarta() == null) appuntamento.setSarta(sarta);

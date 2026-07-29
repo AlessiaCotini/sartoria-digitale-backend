@@ -11,6 +11,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/utenti")
 public class GestioneUtentiController {
@@ -47,5 +50,13 @@ public class GestioneUtentiController {
     @PreAuthorize("isAuthenticated()")
     public UtenteResponse me(@AuthenticationPrincipal Utente autenticato) {
         return toResponse(autenticato);
+    }
+
+    @GetMapping("/clienti")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
+    public List<UtenteResponse> cercaClienti(@RequestParam(defaultValue = "") String ricerca) {
+        return utenteService.cercaClienti(ricerca).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 }

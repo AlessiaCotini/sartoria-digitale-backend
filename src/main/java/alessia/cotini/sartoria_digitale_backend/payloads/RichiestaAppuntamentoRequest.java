@@ -6,5 +6,6 @@ import java.time.LocalDateTime;
 
 public record RichiestaAppuntamentoRequest(
         @NotNull LocalDateTime dataOra,
+        @NotNull LocalDateTime dataOraFine,
         String note
 ) {}

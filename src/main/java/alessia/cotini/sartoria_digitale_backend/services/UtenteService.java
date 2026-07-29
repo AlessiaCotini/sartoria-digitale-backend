@@ -12,6 +12,7 @@ import alessia.cotini.sartoria_digitale_backend.repositories.UtenteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -84,5 +85,9 @@ public class UtenteService {
         utente.setRegistratoDa(registratoDa);
 
         return utenteRepository.save(utente);
+    }
+
+    public List<Utente> cercaClienti(String ricerca) {
+        return utenteRepository.cercaClienti(ricerca);
     }
 }

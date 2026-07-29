@@ -40,6 +40,9 @@ public class Appuntamento {
     @Column(nullable = false)
     private LocalDateTime dataOra;
 
+    @Column(nullable = false)
+    private LocalDateTime dataOraFine;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatoAppuntamento stato;

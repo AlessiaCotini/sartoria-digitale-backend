@@ -9,5 +9,6 @@ public record CreazioneAppuntamentoNegozioRequest(
         UUID clienteId,
         UUID clienteNegozioId,
         @NotNull LocalDateTime dataOra,
+        @NotNull LocalDateTime dataOraFine,
         String note
 ) {}

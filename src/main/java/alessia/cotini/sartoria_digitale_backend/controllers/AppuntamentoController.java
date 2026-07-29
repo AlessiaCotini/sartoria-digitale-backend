@@ -74,6 +74,7 @@ public class AppuntamentoController {
                 a.getSarta() != null ? a.getSarta().getId() : null,
                 a.getSarta() != null ? a.getSarta().getNome() + " " + a.getSarta().getCognome() : null,
                 a.getDataOra(),
+                a.getDataOraFine(),
                 a.getStato(),
                 a.getNote()
         );

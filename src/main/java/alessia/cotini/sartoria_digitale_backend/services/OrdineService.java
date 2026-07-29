@@ -19,14 +19,16 @@ public class OrdineService {
     private final MaterialeRepository materialeRepository;
     private final MisureRepository misureRepository;
     private final ClienteNegozioRepository clienteNegozioRepository;
+    private final PagamentoService pagamentoService;
 
     public OrdineService(OrdineRepository ordineRepository, CapoRepository capoRepository,
-                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository) {
+                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService) {
         this.ordineRepository = ordineRepository;
         this.capoRepository = capoRepository;
         this.materialeRepository = materialeRepository;
         this.misureRepository = misureRepository;
         this.clienteNegozioRepository = clienteNegozioRepository;
+        this.pagamentoService = pagamentoService;
     }
 
     public Ordine creaOrdine(CreazioneOrdineRequest request, Utente cliente) {
@@ -46,7 +48,9 @@ public class OrdineService {
         ordine.setStato(StatoOrdine.PREVENTIVO_RICHIESTO);
         ordine.setPrezzoTotale(capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3);
 
-        return ordineRepository.save(ordine);
+        Ordine salvato = ordineRepository.save(ordine);
+        pagamentoService.creaVuoto(salvato);
+        return salvato;
     }
 
     public List<Ordine> trovaDelCliente(UUID clienteId) {
@@ -109,6 +113,8 @@ public class OrdineService {
         ordine.setAssegnatoA(sarta);
         ordine.setPrezzoTotale(capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3);
 
-        return ordineRepository.save(ordine);
+        Ordine salvato = ordineRepository.save(ordine);
+        pagamentoService.creaVuoto(salvato);
+        return salvato;
     }
 }

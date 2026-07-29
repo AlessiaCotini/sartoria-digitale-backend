@@ -14,6 +14,7 @@ public record AppuntamentoResponse(
         UUID sartaId,
         String nomeSarta,
         LocalDateTime dataOra,
+        LocalDateTime dataOraFine,
         StatoAppuntamento stato,
         String note
 ) {}
