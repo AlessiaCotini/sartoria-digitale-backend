@@ -42,4 +42,10 @@ public class GestioneUtentiController {
     private UtenteResponse toResponse(Utente utente) {
         return new UtenteResponse(utente.getId(), utente.getNome(), utente.getCognome(), utente.getEmail(), utente.getRuolo());
     }
+
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public UtenteResponse me(@AuthenticationPrincipal Utente autenticato) {
+        return toResponse(autenticato);
+    }
 }
