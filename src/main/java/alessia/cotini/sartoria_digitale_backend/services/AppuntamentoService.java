@@ -42,20 +42,30 @@ public class AppuntamentoService {
     }
 
     public Appuntamento creaPerSarta(CreazioneAppuntamentoNegozioRequest request, Utente sarta) {
-        if (request.clienteId() == null && request.clienteNegozioId() == null) {
-            throw new BadRequestException("Serve un cliente registrato o di negozio");
-        }
-
         Appuntamento appuntamento = new Appuntamento();
+
         if (request.clienteId() != null) {
             Utente cliente = utenteRepository.findById(request.clienteId())
                     .orElseThrow(() -> new NotFoundException("Cliente non trovato con id " + request.clienteId()));
             appuntamento.setCliente(cliente);
-        } else {
+        } else if (request.clienteNegozioId() != null) {
             ClienteNegozio clienteNegozio = clienteNegozioRepository.findById(request.clienteNegozioId())
                     .orElseThrow(() -> new NotFoundException("Cliente di negozio non trovato con id " + request.clienteNegozioId()));
             appuntamento.setClienteNegozio(clienteNegozio);
+        } else if (request.nomeClienteNuovo() != null && request.cognomeClienteNuovo() != null
+                && request.telefonoClienteNuovo() != null) {
+            ClienteNegozio nuovo = new ClienteNegozio();
+            nuovo.setNome(request.nomeClienteNuovo());
+            nuovo.setCognome(request.cognomeClienteNuovo());
+            nuovo.setTelefono(request.telefonoClienteNuovo());
+            nuovo.setRegistratoDa(sarta);
+            nuovo = clienteNegozioRepository.save(nuovo);
+            appuntamento.setClienteNegozio(nuovo);
+        } else {
+            throw new BadRequestException(
+                    "Serve un cliente registrato, di negozio esistente, o i dati per crearne uno nuovo");
         }
+
         appuntamento.setSarta(sarta);
         appuntamento.setDataOra(request.dataOra());
         appuntamento.setDataOraFine(request.dataOraFine());
