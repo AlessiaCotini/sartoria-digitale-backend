@@ -56,4 +56,15 @@ public class MessaggioService {
                 m.getDataInvio()
         );
     }
+
+    public long contaNonLetti(UUID utenteId) {
+        return messaggioRepository.contaNonLettiPerUtente(utenteId);
+    }
+
+    public void segnaComeLetti(UUID ordineId, UUID utenteId) {
+        List<Messaggio> daSegnare =
+                messaggioRepository.findByOrdineIdAndMittenteIdNotAndLettoFalse(ordineId, utenteId);
+        daSegnare.forEach(m -> m.setLetto(true));
+        messaggioRepository.saveAll(daSegnare);
+    }
 }
