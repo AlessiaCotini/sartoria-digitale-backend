@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -45,7 +47,13 @@ public class Ordine {
 
     private String colore;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "ordine_opzioni",
+            joinColumns = @JoinColumn(name = "ordine_id"),
+            inverseJoinColumns = @JoinColumn(name = "opzione_id")
+    )
+    private List<OpzioneCapo> opzioniScelte = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -5,11 +5,13 @@ import alessia.cotini.sartoria_digitale_backend.entities.Colore;
 import alessia.cotini.sartoria_digitale_backend.entities.Materiale;
 import alessia.cotini.sartoria_digitale_backend.repositories.CapoRepository;
 import alessia.cotini.sartoria_digitale_backend.repositories.MaterialeRepository;
+import alessia.cotini.sartoria_digitale_backend.repositories.OpzioneCapoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import alessia.cotini.sartoria_digitale_backend.entities.OpzioneCapo;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -20,10 +22,12 @@ public class CatalogoSeeder implements CommandLineRunner {
     private final CapoRepository capoRepository;
     private final MaterialeRepository materialeRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final OpzioneCapoRepository opzioneCapoRepository;
 
-    public CatalogoSeeder(CapoRepository capoRepository, MaterialeRepository materialeRepository) {
+    public CatalogoSeeder(CapoRepository capoRepository, MaterialeRepository materialeRepository, OpzioneCapoRepository opzioneCapoRepository) {
         this.capoRepository = capoRepository;
         this.materialeRepository = materialeRepository;
+        this.opzioneCapoRepository = opzioneCapoRepository;
     }
 
     @Override
@@ -62,6 +66,22 @@ public class CatalogoSeeder implements CommandLineRunner {
                 }).collect(Collectors.toList());
                 materialeRepository.saveAll(materiali);
                 System.out.println("Materiali popolati: " + materiali.size() + " voci");
+            }
+        }
+
+        if (opzioneCapoRepository.count() == 0) {
+            try (InputStream input = new ClassPathResource("data/opzioni.json").getInputStream()) {
+                OpzioneSeed[] seeds = objectMapper.readValue(input, OpzioneSeed[].class);
+                var opzioni = Arrays.stream(seeds).map(s -> {
+                    OpzioneCapo o = new OpzioneCapo();
+                    o.setNome(s.nome());
+                    o.setTipo(s.tipo());
+                    o.setSovrapprezzo(s.sovrapprezzo());
+                    o.setCategorieApplicabili(s.categorieApplicabili());
+                    return o;
+                }).collect(Collectors.toList());
+                opzioneCapoRepository.saveAll(opzioni);
+                System.out.println("Opzioni capo popolate: " + opzioni.size() + " voci");
             }
         }
     }
