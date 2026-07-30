@@ -21,9 +21,10 @@ public class OrdineService {
     private final ClienteNegozioRepository clienteNegozioRepository;
     private final PagamentoService pagamentoService;
     private final UtenteRepository utenteRepository;
+    private final OpzioneCapoRepository opzioneCapoRepository;
 
     public OrdineService(OrdineRepository ordineRepository, CapoRepository capoRepository,
-                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService, UtenteRepository utenteRepository) {
+                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService, UtenteRepository utenteRepository, OpzioneCapoRepository opzioneCapoRepository) {
         this.ordineRepository = ordineRepository;
         this.capoRepository = capoRepository;
         this.materialeRepository = materialeRepository;
@@ -31,6 +32,7 @@ public class OrdineService {
         this.clienteNegozioRepository = clienteNegozioRepository;
         this.pagamentoService = pagamentoService;
         this.utenteRepository = utenteRepository;
+        this.opzioneCapoRepository = opzioneCapoRepository;
     }
 
     public Ordine creaOrdine(CreazioneOrdineRequest request, Utente cliente) {
@@ -45,11 +47,14 @@ public class OrdineService {
         ordine.setCliente(cliente);
         ordine.setCapo(capo);
         ordine.setMateriale(materiale);
+        List<OpzioneCapo> opzioni = trovaOpzioni(request.opzioniIds());
+
         ordine.setColore(request.colore());
         ordine.setMisure(misure);
+        ordine.setOpzioniScelte(opzioni);
         ordine.setStato(StatoOrdine.PREVENTIVO_RICHIESTO);
-        ordine.setPrezzoTotale(capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3);
-
+        ordine.setPrezzoTotale(
+                capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3 + sommaSovrapprezzi(opzioni));
         Ordine salvato = ordineRepository.save(ordine);
         pagamentoService.creaVuoto(salvato);
         return salvato;
@@ -130,15 +135,30 @@ public class OrdineService {
                     "Serve un cliente registrato, di negozio esistente, o i dati per crearne uno nuovo");
         }
 
+        List<OpzioneCapo> opzioni = trovaOpzioni(request.opzioniIds());
+
         ordine.setCapo(capo);
         ordine.setMateriale(materiale);
         ordine.setColore(request.colore());
+        ordine.setOpzioniScelte(opzioni);
         ordine.setStato(StatoOrdine.PREVENTIVO_RICHIESTO);
         ordine.setAssegnatoA(sarta);
-        ordine.setPrezzoTotale(capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3);
+        ordine.setPrezzoTotale(
+                capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3 + sommaSovrapprezzi(opzioni));
 
         Ordine salvato = ordineRepository.save(ordine);
         pagamentoService.creaVuoto(salvato);
         return salvato;
+    }
+
+    private List<OpzioneCapo> trovaOpzioni(List<UUID> opzioniIds) {
+        if (opzioniIds == null || opzioniIds.isEmpty()) {
+            return List.of();
+        }
+        return opzioneCapoRepository.findAllById(opzioniIds);
+    }
+
+    private double sommaSovrapprezzi(List<OpzioneCapo> opzioni) {
+        return opzioni.stream().mapToDouble(OpzioneCapo::getSovrapprezzo).sum();
     }
 }

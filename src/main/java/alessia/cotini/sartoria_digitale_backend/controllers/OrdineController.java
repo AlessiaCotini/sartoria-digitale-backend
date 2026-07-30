@@ -2,10 +2,7 @@ package alessia.cotini.sartoria_digitale_backend.controllers;
 
 import alessia.cotini.sartoria_digitale_backend.entities.Ordine;
 import alessia.cotini.sartoria_digitale_backend.entities.Utente;
-import alessia.cotini.sartoria_digitale_backend.payloads.CambioStatoRequest;
-import alessia.cotini.sartoria_digitale_backend.payloads.CreazioneOrdineNegozioRequest;
-import alessia.cotini.sartoria_digitale_backend.payloads.CreazioneOrdineRequest;
-import alessia.cotini.sartoria_digitale_backend.payloads.OrdineResponse;
+import alessia.cotini.sartoria_digitale_backend.payloads.*;
 import alessia.cotini.sartoria_digitale_backend.services.OrdineService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -73,6 +70,10 @@ public class OrdineController {
 
     private OrdineResponse toResponse(Ordine ordine) {
         boolean registrato = ordine.getCliente() != null;
+        List<OpzioneResponse> opzioni = ordine.getOpzioniScelte().stream()
+                .map(o -> new OpzioneResponse(o.getId(), o.getNome(), o.getTipo(), o.getSovrapprezzo()))
+                .collect(Collectors.toList());
+
         return new OrdineResponse(
                 ordine.getId(),
                 registrato,
@@ -87,6 +88,7 @@ public class OrdineController {
                 ordine.getMateriale().getId(),
                 ordine.getMateriale().getNome(),
                 ordine.getColore(),
+                opzioni,
                 ordine.getStato(),
                 ordine.getAssegnatoA() != null ? ordine.getAssegnatoA().getId() : null,
                 ordine.getPrezzoTotale(),
