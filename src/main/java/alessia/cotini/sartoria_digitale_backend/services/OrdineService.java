@@ -47,14 +47,15 @@ public class OrdineService {
         ordine.setCliente(cliente);
         ordine.setCapo(capo);
         ordine.setMateriale(materiale);
-        List<OpzioneCapo> opzioni = trovaOpzioni(request.opzioniIds());
-
         ordine.setColore(request.colore());
         ordine.setMisure(misure);
+
+        List<OpzioneCapo> opzioni = trovaOpzioni(request.opzioniIds());
         ordine.setOpzioniScelte(opzioni);
         ordine.setStato(StatoOrdine.PREVENTIVO_RICHIESTO);
         ordine.setPrezzoTotale(
                 capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3 + sommaSovrapprezzi(opzioni));
+
         Ordine salvato = ordineRepository.save(ordine);
         pagamentoService.creaVuoto(salvato);
         return salvato;
@@ -85,6 +86,12 @@ public class OrdineService {
 
     public Ordine cambiaStato(UUID ordineId, StatoOrdine nuovoStato) {
         Ordine ordine = trovaPerId(ordineId);
+        if (nuovoStato == StatoOrdine.IN_LAVORAZIONE) {
+            Pagamento pagamento = pagamentoService.trovaPerOrdine(ordineId);
+            if (pagamento.getAccontoImporto() == null) {
+                throw new BadRequestException("Non puoi avviare la lavorazione senza aver registrato l'acconto");
+            }
+        }
         ordine.setStato(nuovoStato);
         return ordineRepository.save(ordine);
     }
@@ -141,7 +148,7 @@ public class OrdineService {
         ordine.setMateriale(materiale);
         ordine.setColore(request.colore());
         ordine.setOpzioniScelte(opzioni);
-        ordine.setStato(StatoOrdine.PREVENTIVO_RICHIESTO);
+        ordine.setStato(StatoOrdine.ACCETTATO);
         ordine.setAssegnatoA(sarta);
         ordine.setPrezzoTotale(
                 capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3 + sommaSovrapprezzi(opzioni));
@@ -160,5 +167,21 @@ public class OrdineService {
 
     private double sommaSovrapprezzi(List<OpzioneCapo> opzioni) {
         return opzioni.stream().mapToDouble(OpzioneCapo::getSovrapprezzo).sum();
+    }
+
+    public Ordine modificaPrezzo(UUID ordineId, Double nuovoPrezzo) {
+        Ordine ordine = trovaPerId(ordineId);
+        ordine.setPrezzoTotale(nuovoPrezzo);
+        return ordineRepository.save(ordine);
+    }
+
+    public List<Ordine> trovaCodaMagazzino() {
+        return ordineRepository.findByStatoIn(List.of(StatoOrdine.ACCETTATO, StatoOrdine.MATERIALI_ORDINATI));
+    }
+
+    public Ordine modificaFornitore(UUID ordineId, String fornitore) {
+        Ordine ordine = trovaPerId(ordineId);
+        ordine.setFornitore(fornitore);
+        return ordineRepository.save(ordine);
     }
 }
