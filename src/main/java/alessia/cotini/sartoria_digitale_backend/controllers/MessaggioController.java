@@ -1,6 +1,7 @@
 package alessia.cotini.sartoria_digitale_backend.controllers;
 
 import alessia.cotini.sartoria_digitale_backend.payloads.MessaggioResponse;
+import alessia.cotini.sartoria_digitale_backend.repositories.ConteggioPerOrdine;
 import alessia.cotini.sartoria_digitale_backend.services.MessaggioService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +41,11 @@ public class MessaggioController {
     @PreAuthorize("isAuthenticated()")
     public void segnaComeLetti(@PathVariable UUID ordineId, @AuthenticationPrincipal Utente autenticato) {
         messaggioService.segnaComeLetti(ordineId, autenticato.getId());
+    }
+
+    @GetMapping("/non-letti/per-ordine")
+    @PreAuthorize("isAuthenticated()")
+    public List<ConteggioPerOrdine> conteggioPerOrdine(@AuthenticationPrincipal Utente autenticato) {
+        return messaggioService.contaNonLettiPerOrdine(autenticato.getId());
     }
 }

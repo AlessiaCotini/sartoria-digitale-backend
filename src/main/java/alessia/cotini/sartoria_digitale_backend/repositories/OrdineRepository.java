@@ -11,4 +11,5 @@ public interface OrdineRepository extends JpaRepository<Ordine, UUID> {
     List<Ordine> findByClienteId(UUID clienteId);
     List<Ordine> findByAssegnatoAId(UUID assegnatoAId);
     List<Ordine> findByStato(StatoOrdine stato);
+    List<Ordine> findByStatoIn(List<StatoOrdine> stati);
 }

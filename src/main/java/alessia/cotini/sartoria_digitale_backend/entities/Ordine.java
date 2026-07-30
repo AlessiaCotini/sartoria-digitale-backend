@@ -47,6 +47,8 @@ public class Ordine {
 
     private String colore;
 
+    private String fornitore;
+
     @ManyToMany
     @JoinTable(
             name = "ordine_opzioni",

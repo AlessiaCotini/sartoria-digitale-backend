@@ -1,9 +1,11 @@
 package alessia.cotini.sartoria_digitale_backend.controllers;
 
 import alessia.cotini.sartoria_digitale_backend.entities.Pagamento;
+import alessia.cotini.sartoria_digitale_backend.enums.StatoOrdine;
 import alessia.cotini.sartoria_digitale_backend.payloads.PagamentoResponse;
 import alessia.cotini.sartoria_digitale_backend.payloads.RegistraAccontoRequest;
 import alessia.cotini.sartoria_digitale_backend.payloads.RegistraSaldoRequest;
+import alessia.cotini.sartoria_digitale_backend.services.OrdineService;
 import alessia.cotini.sartoria_digitale_backend.services.PagamentoService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +20,11 @@ import java.util.stream.Collectors;
 public class PagamentoController {
 
     private final PagamentoService pagamentoService;
+    private final OrdineService ordineService;
 
-    public PagamentoController(PagamentoService pagamentoService) {
+    public PagamentoController(PagamentoService pagamentoService, OrdineService ordineService) {
         this.pagamentoService = pagamentoService;
+        this.ordineService = ordineService;
     }
 
     @GetMapping
@@ -48,8 +52,11 @@ public class PagamentoController {
     @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO')")
     public PagamentoResponse registraSaldo(@PathVariable UUID ordineId,
                                            @RequestBody @Valid RegistraSaldoRequest request) {
-        return toResponse(pagamentoService.registraSaldo(ordineId, request));
+        PagamentoResponse response = toResponse(pagamentoService.registraSaldo(ordineId, request));
+        ordineService.cambiaStato(ordineId, StatoOrdine.COMPLETATO);
+        return response;
     }
+
 
     private PagamentoResponse toResponse(Pagamento p) {
         return new PagamentoResponse(
@@ -64,4 +71,5 @@ public class PagamentoController {
                 pagamentoService.statoDi(p)
         );
     }
+
 }

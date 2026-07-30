@@ -2,10 +2,7 @@ package alessia.cotini.sartoria_digitale_backend.controllers;
 
 import alessia.cotini.sartoria_digitale_backend.entities.Ordine;
 import alessia.cotini.sartoria_digitale_backend.entities.Utente;
-import alessia.cotini.sartoria_digitale_backend.payloads.CambioStatoRequest;
-import alessia.cotini.sartoria_digitale_backend.payloads.CreazioneOrdineNegozioRequest;
-import alessia.cotini.sartoria_digitale_backend.payloads.CreazioneOrdineRequest;
-import alessia.cotini.sartoria_digitale_backend.payloads.OrdineResponse;
+import alessia.cotini.sartoria_digitale_backend.payloads.*;
 import alessia.cotini.sartoria_digitale_backend.services.OrdineService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -73,6 +70,10 @@ public class OrdineController {
 
     private OrdineResponse toResponse(Ordine ordine) {
         boolean registrato = ordine.getCliente() != null;
+        List<OpzioneResponse> opzioni = ordine.getOpzioniScelte().stream()
+                .map(o -> new OpzioneResponse(o.getId(), o.getNome(), o.getTipo(), o.getSovrapprezzo()))
+                .collect(Collectors.toList());
+
         return new OrdineResponse(
                 ordine.getId(),
                 registrato,
@@ -87,6 +88,8 @@ public class OrdineController {
                 ordine.getMateriale().getId(),
                 ordine.getMateriale().getNome(),
                 ordine.getColore(),
+                ordine.getFornitore(),
+                opzioni,
                 ordine.getStato(),
                 ordine.getAssegnatoA() != null ? ordine.getAssegnatoA().getId() : null,
                 ordine.getPrezzoTotale(),
@@ -100,5 +103,25 @@ public class OrdineController {
     public OrdineResponse creaPerClienteNegozio(@RequestBody @Valid CreazioneOrdineNegozioRequest request,
                                                 @AuthenticationPrincipal Utente autenticato) {
         return toResponse(ordineService.creaOrdineNegozio(request, autenticato));
+    }
+
+    @PatchMapping("/{id}/prezzo")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO')")
+    public OrdineResponse modificaPrezzo(@PathVariable UUID id, @RequestBody @Valid ModificaPrezzoRequest request) {
+        return toResponse(ordineService.modificaPrezzo(id, request.prezzoTotale()));
+    }
+
+    @GetMapping("/magazzino")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
+    public List<OrdineResponse> codaMagazzino() {
+        return ordineService.trovaCodaMagazzino().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @PatchMapping("/{id}/fornitore")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
+    public OrdineResponse modificaFornitore(@PathVariable UUID id, @RequestBody @Valid ModificaFornitoreRequest request) {
+        return toResponse(ordineService.modificaFornitore(id, request.fornitore()));
     }
 }

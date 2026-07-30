@@ -16,4 +16,11 @@ public interface MessaggioRepository extends JpaRepository<Messaggio, UUID> {
     long contaNonLettiPerUtente(@Param("utenteId") UUID utenteId);
 
     List<Messaggio> findByOrdineIdAndMittenteIdNotAndLettoFalse(UUID ordineId, UUID mittenteId);
+
+    @Query("SELECT m.ordine.id AS ordineId, COUNT(m) AS conteggio FROM Messaggio m " +
+            "WHERE m.letto = false AND m.mittente.id <> :utenteId " +
+            "AND (m.ordine.cliente.id = :utenteId OR m.ordine.assegnatoA.id = :utenteId) " +
+            "GROUP BY m.ordine.id")
+    List<ConteggioPerOrdine> contaNonLettiPerOrdine(@Param("utenteId") UUID utenteId);
 }
+

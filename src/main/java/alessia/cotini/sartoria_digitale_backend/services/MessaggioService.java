@@ -5,6 +5,7 @@ import alessia.cotini.sartoria_digitale_backend.entities.Messaggio;
 import alessia.cotini.sartoria_digitale_backend.entities.Ordine;
 import alessia.cotini.sartoria_digitale_backend.entities.Utente;
 import alessia.cotini.sartoria_digitale_backend.payloads.MessaggioResponse;
+import alessia.cotini.sartoria_digitale_backend.repositories.ConteggioPerOrdine;
 import alessia.cotini.sartoria_digitale_backend.repositories.MessaggioRepository;
 import alessia.cotini.sartoria_digitale_backend.repositories.OrdineRepository;
 import alessia.cotini.sartoria_digitale_backend.repositories.UtenteRepository;
@@ -67,4 +68,9 @@ public class MessaggioService {
         daSegnare.forEach(m -> m.setLetto(true));
         messaggioRepository.saveAll(daSegnare);
     }
+
+    public List<ConteggioPerOrdine> contaNonLettiPerOrdine(UUID utenteId) {
+        return messaggioRepository.contaNonLettiPerOrdine(utenteId);
+    }
+
 }

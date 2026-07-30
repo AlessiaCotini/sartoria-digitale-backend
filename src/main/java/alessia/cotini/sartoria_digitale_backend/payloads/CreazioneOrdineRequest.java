@@ -3,9 +3,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
+import java.util.List;
 
 public record CreazioneOrdineRequest(
         @NotNull UUID capoId,
         @NotNull UUID materialeId,
-        @NotBlank String colore
+        @NotBlank String colore,
+        List<UUID> opzioniIds
 ) {}
