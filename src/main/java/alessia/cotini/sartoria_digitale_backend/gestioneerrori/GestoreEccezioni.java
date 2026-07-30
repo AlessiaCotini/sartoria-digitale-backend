@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -22,6 +22,12 @@ public class GestoreEccezioni {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, Object>> gestisciBadRequest(BadRequestException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(corpoErrore(e.getMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> gestisciAccessoNegato(AccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(corpoErrore("Non hai i permessi per eseguire questa operazione."));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
