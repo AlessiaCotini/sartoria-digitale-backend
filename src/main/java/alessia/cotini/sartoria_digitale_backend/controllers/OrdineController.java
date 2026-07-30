@@ -88,7 +88,6 @@ public class OrdineController {
                 ordine.getMateriale().getId(),
                 ordine.getMateriale().getNome(),
                 ordine.getColore(),
-                ordine.getFornitore(),
                 opzioni,
                 ordine.getStato(),
                 ordine.getAssegnatoA() != null ? ordine.getAssegnatoA().getId() : null,
