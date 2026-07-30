@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.List;
 
 public record CreazioneOrdineRequest(
         @NotNull UUID capoId,
