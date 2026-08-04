@@ -4,5 +4,8 @@
   {"nome":"Senza chiusura","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["MAGLIETTE","ABITI"]},
   {"nome":"Slim","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE"]},
   {"nome":"Regular","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE"]},
-  {"nome":"Oversize","tipo":"VESTIBILITA","sovrapprezzo":15,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE","ABITI"]}
+  {"nome":"Oversize","tipo":"VESTIBILITA","sovrapprezzo":15,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE","ABITI"]},
+  {"nome":"Nessuna","tipo":"TASCHE","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
+  {"nome":"Toppa","tipo":"TASCHE","sovrapprezzo":8,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
+  {"nome":"A filo","tipo":"TASCHE","sovrapprezzo":12,"categorieApplicabili":["GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]}
 ]
