@@ -23,12 +23,14 @@ public class AppuntamentoService {
     private final AppuntamentoRepository appuntamentoRepository;
     private final UtenteRepository utenteRepository;
     private final ClienteNegozioRepository clienteNegozioRepository;
+    private final MailgunService mailgunService;
 
     public AppuntamentoService(AppuntamentoRepository appuntamentoRepository, UtenteRepository utenteRepository,
-                               ClienteNegozioRepository clienteNegozioRepository) {
+                               ClienteNegozioRepository clienteNegozioRepository, MailgunService mailgunService) {
         this.appuntamentoRepository = appuntamentoRepository;
         this.utenteRepository = utenteRepository;
         this.clienteNegozioRepository = clienteNegozioRepository;
+        this.mailgunService = mailgunService;
     }
 
     public Appuntamento richiedi(RichiestaAppuntamentoRequest request, Utente cliente) {
@@ -71,17 +73,35 @@ public class AppuntamentoService {
         appuntamento.setDataOraFine(request.dataOraFine());
         appuntamento.setNote(request.note());
         appuntamento.setStato(StatoAppuntamento.CONFERMATO);
-        return appuntamentoRepository.save(appuntamento);
+        Appuntamento salvato = appuntamentoRepository.save(appuntamento);
+        if (salvato.getCliente() != null) {
+            mailgunService.invia(
+                    salvato.getCliente().getEmail(),
+                    "Appuntamento confermato",
+                    "Ciao " + salvato.getCliente().getNome() + ",\n\nIl tuo appuntamento in negozio è confermato per il " + salvato.getDataOra() + ".\n\nBellariva"
+            );
+        }
+        return salvato;
     }
 
     public Appuntamento modifica(UUID id, ModificaAppuntamentoRequest request, Utente sarta) {
         Appuntamento appuntamento = trovaPerId(id);
+        boolean diventaConfermato = request.stato() == StatoAppuntamento.CONFERMATO
+                && appuntamento.getStato() != StatoAppuntamento.CONFERMATO;
         if (request.dataOra() != null) appuntamento.setDataOra(request.dataOra());
         if (request.dataOraFine() != null) appuntamento.setDataOraFine(request.dataOraFine());
         if (request.stato() != null) appuntamento.setStato(request.stato());
         if (request.note() != null) appuntamento.setNote(request.note());
         if (appuntamento.getSarta() == null) appuntamento.setSarta(sarta);
-        return appuntamentoRepository.save(appuntamento);
+        Appuntamento salvato = appuntamentoRepository.save(appuntamento);
+        if (diventaConfermato && salvato.getCliente() != null) {
+            mailgunService.invia(
+                    salvato.getCliente().getEmail(),
+                    "Appuntamento confermato",
+                    "Ciao " + salvato.getCliente().getNome() + ",\n\nIl tuo appuntamento è confermato per il " + salvato.getDataOra() + ".\n\nBellariva"
+            );
+        }
+        return salvato;
     }
 
     public Appuntamento trovaPerId(UUID id) {

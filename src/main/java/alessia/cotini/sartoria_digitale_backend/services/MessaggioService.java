@@ -20,12 +20,14 @@ public class MessaggioService {
     private final MessaggioRepository messaggioRepository;
     private final OrdineRepository ordineRepository;
     private final UtenteRepository utenteRepository;
+    private final MailgunService mailgunService;
 
     public MessaggioService(MessaggioRepository messaggioRepository, OrdineRepository ordineRepository,
-                            UtenteRepository utenteRepository) {
+                            UtenteRepository utenteRepository, MailgunService mailgunService) {
         this.messaggioRepository = messaggioRepository;
         this.ordineRepository = ordineRepository;
         this.utenteRepository = utenteRepository;
+        this.mailgunService = mailgunService;
     }
 
     public Messaggio invia(UUID ordineId, UUID mittenteId, String testo) {
@@ -40,7 +42,19 @@ public class MessaggioService {
         messaggio.setTesto(testo);
         messaggio.setLetto(false);
 
-        return messaggioRepository.save(messaggio);
+        Messaggio salvato = messaggioRepository.save(messaggio);
+
+        boolean mittenteECliente = ordine.getCliente() != null && ordine.getCliente().getId().equals(mittenteId);
+        Utente destinatario = mittenteECliente ? ordine.getAssegnatoA() : ordine.getCliente();
+        if (destinatario != null) {
+            mailgunService.invia(
+                    destinatario.getEmail(),
+                    "Nuovo messaggio sul tuo ordine",
+                    mittente.getNome() + " ti ha scritto:\n\n\"" + testo + "\"\n\nRispondi dalla chat del tuo ordine su Bellariva."
+            );
+        }
+
+        return salvato;
     }
 
     public List<Messaggio> storico(UUID ordineId) {

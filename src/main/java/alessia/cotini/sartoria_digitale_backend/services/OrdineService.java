@@ -22,9 +22,10 @@ public class OrdineService {
     private final PagamentoService pagamentoService;
     private final UtenteRepository utenteRepository;
     private final OpzioneCapoRepository opzioneCapoRepository;
+    private final MailgunService mailgunService;
 
     public OrdineService(OrdineRepository ordineRepository, CapoRepository capoRepository,
-                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService, UtenteRepository utenteRepository, OpzioneCapoRepository opzioneCapoRepository) {
+                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService, UtenteRepository utenteRepository, OpzioneCapoRepository opzioneCapoRepository, MailgunService mailgunService) {
         this.ordineRepository = ordineRepository;
         this.capoRepository = capoRepository;
         this.materialeRepository = materialeRepository;
@@ -33,6 +34,7 @@ public class OrdineService {
         this.pagamentoService = pagamentoService;
         this.utenteRepository = utenteRepository;
         this.opzioneCapoRepository = opzioneCapoRepository;
+        this.mailgunService = mailgunService;
     }
 
     public Ordine creaOrdine(CreazioneOrdineRequest request, Utente cliente) {
@@ -58,6 +60,11 @@ public class OrdineService {
 
         Ordine salvato = ordineRepository.save(ordine);
         pagamentoService.creaVuoto(salvato);
+        mailgunService.invia(
+                cliente.getEmail(),
+                "Richiesta preventivo ricevuta",
+                "Ciao " + cliente.getNome() + ",\n\nAbbiamo ricevuto la tua richiesta di preventivo per " + capo.getNome() + ". La sarta la esaminerà e ti risponderà a breve in chat dal tuo profilo.\n\nBellariva"
+        );
         return salvato;
     }
 
@@ -93,7 +100,15 @@ public class OrdineService {
             }
         }
         ordine.setStato(nuovoStato);
-        return ordineRepository.save(ordine);
+        Ordine salvato = ordineRepository.save(ordine);
+        if (ordine.getCliente() != null) {
+            mailgunService.invia(
+                    ordine.getCliente().getEmail(),
+                    "Aggiornamento sul tuo ordine",
+                    "Ciao " + ordine.getCliente().getNome() + ",\n\nLo stato del tuo ordine per " + ordine.getCapo().getNome() + " è cambiato in: " + nuovoStato + ".\n\nBellariva"
+            );
+        }
+        return salvato;
     }
 
     public Ordine creaOrdineNegozio(CreazioneOrdineNegozioRequest request, Utente sarta) {
