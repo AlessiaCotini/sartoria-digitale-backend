@@ -9,6 +9,5 @@ public record CapoSeed(
         String modello,
         String tessuto,
         Double prezzoDa,
-        boolean inEvidenza,
-        String immagine
+        boolean inEvidenza
 ) {}

@@ -7,5 +7,8 @@
   {"nome":"Oversize","tipo":"VESTIBILITA","sovrapprezzo":15,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE","ABITI"]},
   {"nome":"Nessuna","tipo":"TASCHE","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
   {"nome":"Toppa","tipo":"TASCHE","sovrapprezzo":8,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
-  {"nome":"A filo","tipo":"TASCHE","sovrapprezzo":12,"categorieApplicabili":["GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]}
+  {"nome":"A filo","tipo":"TASCHE","sovrapprezzo":12,"categorieApplicabili":["GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
+  {"nome":"Nessuno","tipo":"SPACCHI","sovrapprezzo":0,"categorieApplicabili":["GONNE","ABITI","GIACCHE","CARDIGAN"]},
+  {"nome":"Laterale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI"]},
+  {"nome":"Centrale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI","GIACCHE","CARDIGAN"]}
 ]

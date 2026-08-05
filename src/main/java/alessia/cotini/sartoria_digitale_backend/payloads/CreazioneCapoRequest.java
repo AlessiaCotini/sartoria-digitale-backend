@@ -13,6 +13,5 @@ public record CreazioneCapoRequest(
         String modello,
         String tessuto,
         @NotNull @Positive Double prezzoDa,
-        boolean inEvidenza,
-        String immagine
+        boolean inEvidenza
 ) {}

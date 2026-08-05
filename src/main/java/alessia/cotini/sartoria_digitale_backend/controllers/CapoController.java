@@ -39,7 +39,6 @@ public class CapoController {
         capo.setTessuto(request.tessuto());
         capo.setPrezzoDa(request.prezzoDa());
         capo.setInEvidenza(request.inEvidenza());
-        capo.setImmagine(request.immagine());
         return capoRepository.save(capo);
     }
     @GetMapping("/{id}")

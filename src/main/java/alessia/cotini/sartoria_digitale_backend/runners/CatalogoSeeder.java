@@ -44,7 +44,6 @@ public class CatalogoSeeder implements CommandLineRunner {
                     capo.setTessuto(s.tessuto());
                     capo.setPrezzoDa(s.prezzoDa());
                     capo.setInEvidenza(s.inEvidenza());
-                    capo.setImmagine(s.immagine());
                     return capo;
                 }).collect(Collectors.toList());
                 capoRepository.saveAll(capi);

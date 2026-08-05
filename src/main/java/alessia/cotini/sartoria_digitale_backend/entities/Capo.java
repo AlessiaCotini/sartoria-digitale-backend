@@ -42,5 +42,4 @@ public class Capo {
 
     private boolean inEvidenza;
 
-    private String immagine;
 }
