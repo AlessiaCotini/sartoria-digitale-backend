@@ -1,0 +1,6 @@
+[
+  {"nome":"Tinta unita","tipo":"FANTASIA","sovrapprezzo":0,"tipiApplicabili":["CAPPELLO","SCARPE","BORSA"]},
+  {"nome":"Righe","tipo":"FANTASIA","sovrapprezzo":10,"tipiApplicabili":["CAPPELLO","BORSA"]},
+  {"nome":"Pois","tipo":"FANTASIA","sovrapprezzo":10,"tipiApplicabili":["CAPPELLO","BORSA"]},
+  {"nome":"Floreale","tipo":"FANTASIA","sovrapprezzo":15,"tipiApplicabili":["BORSA"]}
+]

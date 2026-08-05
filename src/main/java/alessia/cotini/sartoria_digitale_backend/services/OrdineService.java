@@ -16,54 +16,89 @@ public class OrdineService {
 
     private final OrdineRepository ordineRepository;
     private final CapoRepository capoRepository;
+    private final AccessorioRepository accessorioRepository;
     private final MaterialeRepository materialeRepository;
     private final MisureRepository misureRepository;
     private final ClienteNegozioRepository clienteNegozioRepository;
     private final PagamentoService pagamentoService;
     private final UtenteRepository utenteRepository;
     private final OpzioneCapoRepository opzioneCapoRepository;
+    private final OpzioneAccessorioRepository opzioneAccessorioRepository;
     private final MailgunService mailgunService;
 
     public OrdineService(OrdineRepository ordineRepository, CapoRepository capoRepository,
-                         MaterialeRepository materialeRepository, MisureRepository misureRepository, ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService, UtenteRepository utenteRepository, OpzioneCapoRepository opzioneCapoRepository, MailgunService mailgunService) {
+                         AccessorioRepository accessorioRepository,
+                         MaterialeRepository materialeRepository, MisureRepository misureRepository,
+                         ClienteNegozioRepository clienteNegozioRepository, PagamentoService pagamentoService,
+                         UtenteRepository utenteRepository, OpzioneCapoRepository opzioneCapoRepository,
+                         OpzioneAccessorioRepository opzioneAccessorioRepository, MailgunService mailgunService) {
         this.ordineRepository = ordineRepository;
         this.capoRepository = capoRepository;
+        this.accessorioRepository = accessorioRepository;
         this.materialeRepository = materialeRepository;
         this.misureRepository = misureRepository;
         this.clienteNegozioRepository = clienteNegozioRepository;
         this.pagamentoService = pagamentoService;
         this.utenteRepository = utenteRepository;
         this.opzioneCapoRepository = opzioneCapoRepository;
+        this.opzioneAccessorioRepository = opzioneAccessorioRepository;
         this.mailgunService = mailgunService;
     }
 
+    private record OggettoOrdinato(String nome, double prezzoBase) {}
+
+    private OggettoOrdinato applicaCapoOAccessorio(Ordine ordine, UUID capoId, UUID accessorioId,
+                                                   List<OpzioneCapo> opzioniCapo, List<OpzioneAccessorio> opzioniAccessorio) {
+        if (capoId != null && accessorioId != null) {
+            throw new BadRequestException("Un ordine può riferirsi a un capo oppure a un accessorio, non entrambi");
+        }
+        if (capoId != null) {
+            Capo capo = capoRepository.findById(capoId)
+                    .orElseThrow(() -> new NotFoundException("Capo non trovato con id " + capoId));
+            ordine.setCapo(capo);
+            ordine.setOpzioniScelte(opzioniCapo);
+            return new OggettoOrdinato(capo.getNome(), capo.getPrezzoDa());
+        }
+        if (accessorioId != null) {
+            Accessorio accessorio = accessorioRepository.findById(accessorioId)
+                    .orElseThrow(() -> new NotFoundException("Accessorio non trovato con id " + accessorioId));
+            ordine.setAccessorio(accessorio);
+            ordine.setOpzioniAccessorioScelte(opzioniAccessorio);
+            return new OggettoOrdinato(accessorio.getNome(), accessorio.getPrezzoDa());
+        }
+        throw new BadRequestException("Serve un capo o un accessorio da ordinare");
+    }
+
     public Ordine creaOrdine(CreazioneOrdineRequest request, Utente cliente) {
-        Capo capo = capoRepository.findById(request.capoId())
-                .orElseThrow(() -> new NotFoundException("Capo non trovato con id " + request.capoId()));
         Materiale materiale = materialeRepository.findById(request.materialeId())
                 .orElseThrow(() -> new NotFoundException("Materiale non trovato con id " + request.materialeId()));
-        Misure misure = misureRepository.findByUtenteId(cliente.getId())
-                .orElseThrow(() -> new BadRequestException("Nessuna misura trovata per questo cliente"));
 
         Ordine ordine = new Ordine();
         ordine.setCliente(cliente);
-        ordine.setCapo(capo);
         ordine.setMateriale(materiale);
         ordine.setColore(request.colore());
-        ordine.setMisure(misure);
 
-        List<OpzioneCapo> opzioni = trovaOpzioni(request.opzioniIds());
-        ordine.setOpzioniScelte(opzioni);
+        if (request.capoId() != null) {
+            Misure misure = misureRepository.findByUtenteId(cliente.getId())
+                    .orElseThrow(() -> new BadRequestException("Nessuna misura trovata per questo cliente"));
+            ordine.setMisure(misure);
+        }
+
+        List<OpzioneCapo> opzioniCapo = trovaOpzioni(request.opzioniIds());
+        List<OpzioneAccessorio> opzioniAccessorio = trovaOpzioniAccessorio(request.opzioniAccessorioIds());
+        OggettoOrdinato oggetto = applicaCapoOAccessorio(ordine, request.capoId(), request.accessorioId(), opzioniCapo, opzioniAccessorio);
+
         ordine.setStato(StatoOrdine.PREVENTIVO_RICHIESTO);
         ordine.setPrezzoTotale(
-                capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3 + sommaSovrapprezzi(opzioni));
+                oggetto.prezzoBase() + materiale.getPrezzoAlMetro() * (request.capoId() != null ? 3 : 1)
+                        + sommaSovrapprezzi(opzioniCapo) + sommaSovrapprezziAccessorio(opzioniAccessorio));
 
         Ordine salvato = ordineRepository.save(ordine);
         pagamentoService.creaVuoto(salvato);
         mailgunService.invia(
                 cliente.getEmail(),
                 "Richiesta preventivo ricevuta",
-                "Ciao " + cliente.getNome() + ",\n\nAbbiamo ricevuto la tua richiesta di preventivo per " + capo.getNome() + ". La sarta la esaminerà e ti risponderà a breve in chat dal tuo profilo.\n\nBellariva"
+                "Ciao " + cliente.getNome() + ",\n\nAbbiamo ricevuto la tua richiesta di preventivo per " + oggetto.nome() + ". La sarta la esaminerà e ti risponderà a breve in chat dal tuo profilo.\n\nBellariva"
         );
         return salvato;
     }
@@ -102,18 +137,17 @@ public class OrdineService {
         ordine.setStato(nuovoStato);
         Ordine salvato = ordineRepository.save(ordine);
         if (ordine.getCliente() != null) {
+            String nomeOggetto = ordine.getCapo() != null ? ordine.getCapo().getNome() : ordine.getAccessorio().getNome();
             mailgunService.invia(
                     ordine.getCliente().getEmail(),
                     "Aggiornamento sul tuo ordine",
-                    "Ciao " + ordine.getCliente().getNome() + ",\n\nLo stato del tuo ordine per " + ordine.getCapo().getNome() + " è cambiato in: " + nuovoStato + ".\n\nBellariva"
+                    "Ciao " + ordine.getCliente().getNome() + ",\n\nLo stato del tuo ordine per " + nomeOggetto + " è cambiato in: " + nuovoStato + ".\n\nBellariva"
             );
         }
         return salvato;
     }
 
     public Ordine creaOrdineNegozio(CreazioneOrdineNegozioRequest request, Utente sarta) {
-        Capo capo = capoRepository.findById(request.capoId())
-                .orElseThrow(() -> new NotFoundException("Capo non trovato con id " + request.capoId()));
         Materiale materiale = materialeRepository.findById(request.materialeId())
                 .orElseThrow(() -> new NotFoundException("Materiale non trovato con id " + request.materialeId()));
 
@@ -122,10 +156,12 @@ public class OrdineService {
         if (request.clienteId() != null) {
             Utente cliente = utenteRepository.findById(request.clienteId())
                     .orElseThrow(() -> new NotFoundException("Cliente non trovato con id " + request.clienteId()));
-            Misure misure = misureRepository.findByUtenteId(cliente.getId())
-                    .orElseThrow(() -> new BadRequestException("Nessuna misura trovata per questo cliente"));
             ordine.setCliente(cliente);
-            ordine.setMisure(misure);
+            if (request.capoId() != null) {
+                Misure misure = misureRepository.findByUtenteId(cliente.getId())
+                        .orElseThrow(() -> new BadRequestException("Nessuna misura trovata per questo cliente"));
+                ordine.setMisure(misure);
+            }
         } else if (request.clienteNegozioId() != null) {
             ClienteNegozio clienteNegozio = clienteNegozioRepository.findById(request.clienteNegozioId())
                     .orElseThrow(() -> new NotFoundException(
@@ -157,16 +193,17 @@ public class OrdineService {
                     "Serve un cliente registrato, di negozio esistente, o i dati per crearne uno nuovo");
         }
 
-        List<OpzioneCapo> opzioni = trovaOpzioni(request.opzioniIds());
+        List<OpzioneCapo> opzioniCapo = trovaOpzioni(request.opzioniIds());
+        List<OpzioneAccessorio> opzioniAccessorio = trovaOpzioniAccessorio(request.opzioniAccessorioIds());
+        OggettoOrdinato oggetto = applicaCapoOAccessorio(ordine, request.capoId(), request.accessorioId(), opzioniCapo, opzioniAccessorio);
 
-        ordine.setCapo(capo);
         ordine.setMateriale(materiale);
         ordine.setColore(request.colore());
-        ordine.setOpzioniScelte(opzioni);
         ordine.setStato(StatoOrdine.ACCETTATO);
         ordine.setAssegnatoA(sarta);
         ordine.setPrezzoTotale(
-                capo.getPrezzoDa() + materiale.getPrezzoAlMetro() * 3 + sommaSovrapprezzi(opzioni));
+                oggetto.prezzoBase() + materiale.getPrezzoAlMetro() * (request.capoId() != null ? 3 : 1)
+                        + sommaSovrapprezzi(opzioniCapo) + sommaSovrapprezziAccessorio(opzioniAccessorio));
 
         Ordine salvato = ordineRepository.save(ordine);
         pagamentoService.creaVuoto(salvato);
@@ -180,8 +217,19 @@ public class OrdineService {
         return opzioneCapoRepository.findAllById(opzioniIds);
     }
 
+    private List<OpzioneAccessorio> trovaOpzioniAccessorio(List<UUID> opzioniIds) {
+        if (opzioniIds == null || opzioniIds.isEmpty()) {
+            return List.of();
+        }
+        return opzioneAccessorioRepository.findAllById(opzioniIds);
+    }
+
     private double sommaSovrapprezzi(List<OpzioneCapo> opzioni) {
         return opzioni.stream().mapToDouble(OpzioneCapo::getSovrapprezzo).sum();
+    }
+
+    private double sommaSovrapprezziAccessorio(List<OpzioneAccessorio> opzioni) {
+        return opzioni.stream().mapToDouble(OpzioneAccessorio::getSovrapprezzo).sum();
     }
 
     public Ordine modificaPrezzo(UUID ordineId, Double nuovoPrezzo) {

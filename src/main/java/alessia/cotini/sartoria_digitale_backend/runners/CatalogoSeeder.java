@@ -1,17 +1,12 @@
 package alessia.cotini.sartoria_digitale_backend.runners;
 
-import alessia.cotini.sartoria_digitale_backend.entities.Capo;
-import alessia.cotini.sartoria_digitale_backend.entities.Colore;
-import alessia.cotini.sartoria_digitale_backend.entities.Materiale;
-import alessia.cotini.sartoria_digitale_backend.repositories.CapoRepository;
-import alessia.cotini.sartoria_digitale_backend.repositories.MaterialeRepository;
-import alessia.cotini.sartoria_digitale_backend.repositories.OpzioneCapoRepository;
+import alessia.cotini.sartoria_digitale_backend.entities.*;
+import alessia.cotini.sartoria_digitale_backend.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import alessia.cotini.sartoria_digitale_backend.entities.OpzioneCapo;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -23,11 +18,15 @@ public class CatalogoSeeder implements CommandLineRunner {
     private final MaterialeRepository materialeRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final OpzioneCapoRepository opzioneCapoRepository;
+    private final AccessorioRepository accessorioRepository;
+    private final OpzioneAccessorioRepository opzioneAccessorioRepository;
 
-    public CatalogoSeeder(CapoRepository capoRepository, MaterialeRepository materialeRepository, OpzioneCapoRepository opzioneCapoRepository) {
+    public CatalogoSeeder(CapoRepository capoRepository, MaterialeRepository materialeRepository, OpzioneCapoRepository opzioneCapoRepository, AccessorioRepository accessorioRepository, OpzioneAccessorioRepository opzioneAccessorioRepository) {
         this.capoRepository = capoRepository;
         this.materialeRepository = materialeRepository;
         this.opzioneCapoRepository = opzioneCapoRepository;
+        this.accessorioRepository = accessorioRepository;
+        this.opzioneAccessorioRepository = opzioneAccessorioRepository;
     }
 
     @Override
@@ -83,5 +82,41 @@ public class CatalogoSeeder implements CommandLineRunner {
                 System.out.println("Opzioni capo popolate: " + opzioni.size() + " voci");
             }
         }
+        if (accessorioRepository.count() == 0) {
+            try (InputStream input = new ClassPathResource("data/accessori.json").getInputStream()) {
+                AccessorioSeed[] seeds = objectMapper.readValue(input, AccessorioSeed[].class);
+                var accessori = Arrays.stream(seeds).map(s -> {
+                    Accessorio a = new Accessorio();
+                    a.setNome(s.nome());
+                    a.setGenere(s.genere());
+                    a.setTipo(s.tipo());
+                    a.setModello(s.modello());
+                    a.setTessuto(s.tessuto());
+                    a.setPrezzoDa(s.prezzoDa());
+                    a.setInEvidenza(s.inEvidenza());
+                    return a;
+                }).collect(Collectors.toList());
+                accessorioRepository.saveAll(accessori);
+                System.out.println("Accessori popolati: " + accessori.size() + " voci");
+            }
+        }
+
+        if (opzioneAccessorioRepository.count() == 0) {
+            try (InputStream input = new ClassPathResource("data/opzioni-accessori.json").getInputStream()) {
+                OpzioneAccessorioSeed[] seeds = objectMapper.readValue(input, OpzioneAccessorioSeed[].class);
+                var opzioni = Arrays.stream(seeds).map(s -> {
+                    OpzioneAccessorio o = new OpzioneAccessorio();
+                    o.setNome(s.nome());
+                    o.setTipo(s.tipo());
+                    o.setSovrapprezzo(s.sovrapprezzo());
+                    o.setTipiApplicabili(s.tipiApplicabili());
+                    return o;
+                }).collect(Collectors.toList());
+                opzioneAccessorioRepository.saveAll(opzioni);
+                System.out.println("Opzioni accessorio popolate: " + opzioni.size() + " voci");
+            }
+        }
+
+
     }
 }

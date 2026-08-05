@@ -1,5 +1,4 @@
 package alessia.cotini.sartoria_digitale_backend.entities;
-
 import alessia.cotini.sartoria_digitale_backend.enums.StatoOrdine;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,9 +32,13 @@ public class Ordine {
     @JoinColumn(name = "cliente_negozio_id")
     private ClienteNegozio clienteNegozio;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "capo_id")
     private Capo capo;
+
+    @ManyToOne
+    @JoinColumn(name = "accessorio_id")
+    private Accessorio accessorio;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "materiale_id")
@@ -57,10 +60,17 @@ public class Ordine {
     )
     private List<OpzioneCapo> opzioniScelte = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "ordine_opzioni_accessorio",
+            joinColumns = @JoinColumn(name = "ordine_id"),
+            inverseJoinColumns = @JoinColumn(name = "opzione_id")
+    )
+    private List<OpzioneAccessorio> opzioniAccessorioScelte = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatoOrdine stato;
-
 
     @ManyToOne
     @JoinColumn(name = "assegnato_a_id")

@@ -14,8 +14,10 @@ public record CreazioneOrdineNegozioRequest(
         String cognomeClienteNuovo,
         String telefonoClienteNuovo,
         @Valid MisureRequest misureClienteNuovo,
-        @NotNull UUID capoId,
+        UUID capoId,
+        UUID accessorioId,
         @NotNull UUID materialeId,
         @NotBlank String colore,
-        List<UUID> opzioniIds
+        List<UUID> opzioniIds,
+        List<UUID> opzioniAccessorioIds
 ) {}

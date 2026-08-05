@@ -24,6 +24,39 @@ public class OrdineController {
         this.ordineService = ordineService;
     }
 
+    private OrdineResponse toResponse(Ordine ordine) {
+        boolean registrato = ordine.getCliente() != null;
+
+        List<OpzioneResponse> opzioni = ordine.getOpzioniScelte().stream()
+                .map(o -> new OpzioneResponse(o.getId(), o.getNome(), o.getTipo(), o.getSovrapprezzo()))
+                .collect(Collectors.toList());
+        ordine.getOpzioniAccessorioScelte().forEach(o ->
+                opzioni.add(new OpzioneResponse(o.getId(), o.getNome(), o.getTipo(), o.getSovrapprezzo())));
+
+        return new OrdineResponse(
+                ordine.getId(),
+                registrato,
+                registrato ? ordine.getCliente().getId() : null,
+                registrato ? null : ordine.getClienteNegozio().getId(),
+                registrato
+                        ? ordine.getCliente().getNome() + " " + ordine.getCliente().getCognome()
+                        : ordine.getClienteNegozio().getNome() + " " + ordine.getClienteNegozio().getCognome(),
+                registrato ? null : ordine.getClienteNegozio().getTelefono(),
+                ordine.getCapo() != null ? ordine.getCapo().getId() : null,
+                ordine.getCapo() != null ? ordine.getCapo().getNome() : null,
+                ordine.getAccessorio() != null ? ordine.getAccessorio().getId() : null,
+                ordine.getAccessorio() != null ? ordine.getAccessorio().getNome() : null,
+                ordine.getMateriale().getId(),
+                ordine.getMateriale().getNome(),
+                ordine.getColore(),
+                opzioni,
+                ordine.getStato(),
+                ordine.getAssegnatoA() != null ? ordine.getAssegnatoA().getId() : null,
+                ordine.getPrezzoTotale(),
+                ordine.getDataCreazione()
+        );
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('CLIENTE')")
@@ -68,33 +101,7 @@ public class OrdineController {
         return toResponse(ordineService.cambiaStato(id, request.stato()));
     }
 
-    private OrdineResponse toResponse(Ordine ordine) {
-        boolean registrato = ordine.getCliente() != null;
-        List<OpzioneResponse> opzioni = ordine.getOpzioniScelte().stream()
-                .map(o -> new OpzioneResponse(o.getId(), o.getNome(), o.getTipo(), o.getSovrapprezzo()))
-                .collect(Collectors.toList());
 
-        return new OrdineResponse(
-                ordine.getId(),
-                registrato,
-                registrato ? ordine.getCliente().getId() : null,
-                registrato ? null : ordine.getClienteNegozio().getId(),
-                registrato
-                        ? ordine.getCliente().getNome() + " " + ordine.getCliente().getCognome()
-                        : ordine.getClienteNegozio().getNome() + " " + ordine.getClienteNegozio().getCognome(),
-                registrato ? null : ordine.getClienteNegozio().getTelefono(),
-                ordine.getCapo().getId(),
-                ordine.getCapo().getNome(),
-                ordine.getMateriale().getId(),
-                ordine.getMateriale().getNome(),
-                ordine.getColore(),
-                opzioni,
-                ordine.getStato(),
-                ordine.getAssegnatoA() != null ? ordine.getAssegnatoA().getId() : null,
-                ordine.getPrezzoTotale(),
-                ordine.getDataCreazione()
-        );
-    }
 
     @PostMapping("/negozio")
     @ResponseStatus(HttpStatus.CREATED)

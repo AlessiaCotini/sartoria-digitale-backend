@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 public record CreazioneOrdineRequest(
-        @NotNull UUID capoId,
+        UUID capoId,
+        UUID accessorioId,
         @NotNull UUID materialeId,
         @NotBlank String colore,
-        List<UUID> opzioniIds
+        List<UUID> opzioniIds,
+        List<UUID> opzioniAccessorioIds
 ) {}

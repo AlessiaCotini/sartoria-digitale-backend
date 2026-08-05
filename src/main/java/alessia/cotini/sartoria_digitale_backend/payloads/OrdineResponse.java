@@ -15,6 +15,8 @@ public record OrdineResponse(
         String telefonoCliente,
         UUID capoId,
         String capoNome,
+        UUID accessorioId,
+        String accessorioNome,
         UUID materialeId,
         String materialeNome,
         String colore,

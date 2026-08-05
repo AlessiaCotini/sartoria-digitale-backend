@@ -1,0 +1,18 @@
+[
+  {"nome":"Coppola","genere":"UOMO","tipo":"CAPPELLO","modello":"Coppola","tessuto":"Tweed di lana","prezzoDa":65,"inEvidenza":false},
+  {"nome":"Fedora","genere":"UOMO","tipo":"CAPPELLO","modello":"Fedora","tessuto":"Feltro di lana","prezzoDa":85,"inEvidenza":false},
+  {"nome":"Cloche","genere":"DONNA","tipo":"CAPPELLO","modello":"Cloche","tessuto":"Feltro di lana","prezzoDa":75,"inEvidenza":false},
+  {"nome":"Cappello a tesa larga","genere":"DONNA","tipo":"CAPPELLO","modello":"Tesa larga","tessuto":"Paglia intrecciata","prezzoDa":70,"inEvidenza":false},
+  {"nome":"Stringate classiche","genere":"UOMO","tipo":"SCARPE","modello":"Stringate classiche","tessuto":"Pelle box calf","prezzoDa":220,"inEvidenza":false},
+  {"nome":"Mocassino","genere":"UOMO","tipo":"SCARPE","modello":"Mocassino","tessuto":"Pelle nabuk","prezzoDa":180,"inEvidenza":false},
+  {"nome":"Sneaker in pelle","genere":"UOMO","tipo":"SCARPE","modello":"Sneaker","tessuto":"Pelle pieno fiore","prezzoDa":160,"inEvidenza":false},
+  {"nome":"Décolleté","genere":"DONNA","tipo":"SCARPE","modello":"Decollete","tessuto":"Pelle laminata","prezzoDa":195,"inEvidenza":false},
+  {"nome":"Ballerina","genere":"DONNA","tipo":"SCARPE","modello":"Ballerina","tessuto":"Pelle scamosciata","prezzoDa":150,"inEvidenza":false},
+  {"nome":"Stivaletto","genere":"DONNA","tipo":"SCARPE","modello":"Stivaletto","tessuto":"Pelle pieno fiore","prezzoDa":210,"inEvidenza":false},
+  {"nome":"Tote bag","genere":"DONNA","tipo":"BORSA","modello":"Tote","tessuto":"Pelle Saffiano","prezzoDa":180,"inEvidenza":true},
+  {"nome":"Borsa a tracolla","genere":"DONNA","tipo":"BORSA","modello":"Tracolla","tessuto":"Pelle martellata","prezzoDa":150,"inEvidenza":false},
+  {"nome":"Clutch","genere":"DONNA","tipo":"BORSA","modello":"Clutch","tessuto":"Raso di seta","prezzoDa":120,"inEvidenza":false},
+  {"nome":"Marsupio","genere":"UOMO","tipo":"BORSA","modello":"Marsupio","tessuto":"Nylon tecnico","prezzoDa":90,"inEvidenza":false},
+  {"nome":"Borsello a tracolla","genere":"UOMO","tipo":"BORSA","modello":"Tracolla","tessuto":"Pelle pieno fiore","prezzoDa":140,"inEvidenza":false},
+  {"nome":"Pochette da polso","genere":"UOMO","tipo":"BORSA","modello":"Pochette","tessuto":"Pelle martellata","prezzoDa":110,"inEvidenza":false}
+]
