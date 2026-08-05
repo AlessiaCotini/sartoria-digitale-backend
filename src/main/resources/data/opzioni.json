@@ -1,5 +1,7 @@
 [
-  {"nome":"Bottoni","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","ABITI"]},
+  {"nome":"Bottoni piccoli","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","ABITI"]},
+  {"nome":"Bottoni medi","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","ABITI"]},
+  {"nome":"Bottoni grandi","tipo":"CHIUSURA","sovrapprezzo":5,"categorieApplicabili":["TOP_LUNGO","ABITI"]},
   {"nome":"Zip","tipo":"CHIUSURA","sovrapprezzo":10,"categorieApplicabili":["TOP_LUNGO"]},
   {"nome":"Senza chiusura","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["MAGLIETTE","ABITI"]},
   {"nome":"Slim","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","PANTALONI","MAGLIETTE"]},
@@ -10,5 +12,12 @@
   {"nome":"A filo","tipo":"TASCHE","sovrapprezzo":12,"categorieApplicabili":["TOP_LUNGO","PANTALONI"]},
   {"nome":"Nessuno","tipo":"SPACCHI","sovrapprezzo":0,"categorieApplicabili":["GONNE","ABITI","TOP_LUNGO"]},
   {"nome":"Laterale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI"]},
-  {"nome":"Centrale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI","TOP_LUNGO"]}
+  {"nome":"Centrale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI","TOP_LUNGO"]},
+  {"nome":"Tinta unita","tipo":"FANTASIA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","MAGLIETTE","ABITI","GONNE","PANTALONI"]},
+  {"nome":"Righe","tipo":"FANTASIA","sovrapprezzo":10,"categorieApplicabili":["TOP_LUNGO","MAGLIETTE","ABITI","GONNE","PANTALONI"]},
+  {"nome":"Pois","tipo":"FANTASIA","sovrapprezzo":10,"categorieApplicabili":["TOP_LUNGO","MAGLIETTE","ABITI","GONNE"]},
+  {"nome":"Floreale","tipo":"FANTASIA","sovrapprezzo":15,"categorieApplicabili":["ABITI","GONNE","MAGLIETTE"]},
+  {"nome":"Nessuna","tipo":"RIFINITURA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","MAGLIETTE","ABITI","GONNE"]},
+  {"nome":"Pizzo","tipo":"RIFINITURA","sovrapprezzo":18,"categorieApplicabili":["ABITI","GONNE","TOP_LUNGO"]},
+  {"nome":"Frangia","tipo":"RIFINITURA","sovrapprezzo":14,"categorieApplicabili":["ABITI","GONNE"]}
 ]
