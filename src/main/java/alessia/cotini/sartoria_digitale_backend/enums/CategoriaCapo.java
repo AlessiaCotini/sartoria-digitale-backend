@@ -1,12 +1,9 @@
 package alessia.cotini.sartoria_digitale_backend.enums;
 
 public enum CategoriaCapo {
-    ABITI,
-    CAMICIE,
+    TOP_LUNGO,
     MAGLIETTE,
+    ABITI,
     GONNE,
-    PANTALONI,
-    CARDIGAN,
-    GIACCHE,
-    COMPLETI
+    PANTALONI
 }

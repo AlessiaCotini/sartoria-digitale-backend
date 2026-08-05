@@ -1,14 +1,14 @@
 [
-  {"nome":"Bottoni","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","ABITI"]},
-  {"nome":"Zip","tipo":"CHIUSURA","sovrapprezzo":10,"categorieApplicabili":["GIACCHE","CARDIGAN"]},
+  {"nome":"Bottoni","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","ABITI"]},
+  {"nome":"Zip","tipo":"CHIUSURA","sovrapprezzo":10,"categorieApplicabili":["TOP_LUNGO"]},
   {"nome":"Senza chiusura","tipo":"CHIUSURA","sovrapprezzo":0,"categorieApplicabili":["MAGLIETTE","ABITI"]},
-  {"nome":"Slim","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE"]},
-  {"nome":"Regular","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE"]},
-  {"nome":"Oversize","tipo":"VESTIBILITA","sovrapprezzo":15,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI","MAGLIETTE","ABITI"]},
-  {"nome":"Nessuna","tipo":"TASCHE","sovrapprezzo":0,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
-  {"nome":"Toppa","tipo":"TASCHE","sovrapprezzo":8,"categorieApplicabili":["CAMICIE","GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
-  {"nome":"A filo","tipo":"TASCHE","sovrapprezzo":12,"categorieApplicabili":["GIACCHE","CARDIGAN","COMPLETI","PANTALONI"]},
-  {"nome":"Nessuno","tipo":"SPACCHI","sovrapprezzo":0,"categorieApplicabili":["GONNE","ABITI","GIACCHE","CARDIGAN"]},
+  {"nome":"Slim","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","PANTALONI","MAGLIETTE"]},
+  {"nome":"Regular","tipo":"VESTIBILITA","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","PANTALONI","MAGLIETTE"]},
+  {"nome":"Oversize","tipo":"VESTIBILITA","sovrapprezzo":15,"categorieApplicabili":["TOP_LUNGO","PANTALONI","MAGLIETTE","ABITI"]},
+  {"nome":"Nessuna","tipo":"TASCHE","sovrapprezzo":0,"categorieApplicabili":["TOP_LUNGO","PANTALONI"]},
+  {"nome":"Toppa","tipo":"TASCHE","sovrapprezzo":8,"categorieApplicabili":["TOP_LUNGO","PANTALONI"]},
+  {"nome":"A filo","tipo":"TASCHE","sovrapprezzo":12,"categorieApplicabili":["TOP_LUNGO","PANTALONI"]},
+  {"nome":"Nessuno","tipo":"SPACCHI","sovrapprezzo":0,"categorieApplicabili":["GONNE","ABITI","TOP_LUNGO"]},
   {"nome":"Laterale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI"]},
-  {"nome":"Centrale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI","GIACCHE","CARDIGAN"]}
+  {"nome":"Centrale","tipo":"SPACCHI","sovrapprezzo":6,"categorieApplicabili":["GONNE","ABITI","TOP_LUNGO"]}
 ]
