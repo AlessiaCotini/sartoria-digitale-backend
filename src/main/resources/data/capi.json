@@ -1,5 +1,5 @@
 [
-  {"nome":"Camicia","genere":"UOMO","categoria":"TOP_LUNGO","modello":"Classico","tessuto":"Lana pettinata","prezzoDa":120,"inEvidenza":true},
+  {"nome":"Camicia","genere":"UOMO","categoria":"TOP_LUNGO","modello":"Classico","tessuto":"Lana pettinata","prezzoDa":120,"inEvidenza":false},
   {"nome":"Camicia","genere":"DONNA","categoria":"TOP_LUNGO","modello":"Classico","tessuto":"Lana pettinata","prezzoDa":120,"inEvidenza":true},
   {"nome":"Maglietta","genere":"UOMO","categoria":"MAGLIETTE","modello":"Girocollo","tessuto":"Jersey di cotone","prezzoDa":50,"inEvidenza":false},
   {"nome":"Maglietta","genere":"DONNA","categoria":"MAGLIETTE","modello":"Girocollo","tessuto":"Jersey di cotone","prezzoDa":50,"inEvidenza":false},
