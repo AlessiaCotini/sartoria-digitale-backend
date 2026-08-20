@@ -54,6 +54,12 @@ public class Utente implements UserDetails {
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataRegistrazione;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_scadenza")
+    private LocalDateTime resetTokenScadenza;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + ruolo.name()));

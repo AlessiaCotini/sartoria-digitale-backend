@@ -12,7 +12,9 @@ import alessia.cotini.sartoria_digitale_backend.repositories.UtenteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -87,7 +89,33 @@ public class UtenteService {
         return utenteRepository.save(utente);
     }
 
+
     public List<Utente> cercaClienti(String ricerca) {
         return utenteRepository.cercaClienti(ricerca);
+    }
+
+    public Optional<Utente> generaTokenReset(String email) {
+        Optional<Utente> forse = utenteRepository.findByEmail(email);
+        if (forse.isEmpty()) return Optional.empty();
+
+        Utente utente = forse.get();
+        utente.setResetToken(UUID.randomUUID().toString());
+        utente.setResetTokenScadenza(LocalDateTime.now().plusHours(1));
+        return Optional.of(utenteRepository.save(utente));
+    }
+
+    public void resettaPassword(String token, String nuovaPassword) {
+        Utente utente = utenteRepository.findByResetToken(token)
+                .orElseThrow(() -> new BadRequestException("Link di reset non valido o scaduto"));
+
+        if (utente.getResetTokenScadenza() == null
+                || utente.getResetTokenScadenza().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Link di reset non valido o scaduto");
+        }
+
+        utente.setPassword(passwordEncoder.encode(nuovaPassword));
+        utente.setResetToken(null);
+        utente.setResetTokenScadenza(null);
+        utenteRepository.save(utente);
     }
 }

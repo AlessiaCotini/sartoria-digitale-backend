@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public interface UtenteRepository extends JpaRepository<Utente, UUID> {
     Optional<Utente> findByEmail(String email);
+    Optional<Utente> findByResetToken(String resetToken);
     boolean existsByEmail(String email);
     @Query("SELECT u FROM Utente u WHERE u.ruolo = alessia.cotini.sartoria_digitale_backend.enums.Ruolo.CLIENTE " +
             "AND (LOWER(u.nome) LIKE LOWER(CONCAT('%', :ricerca, '%')) " +
