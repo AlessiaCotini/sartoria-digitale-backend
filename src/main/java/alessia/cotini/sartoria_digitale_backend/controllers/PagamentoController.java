@@ -28,7 +28,7 @@ public class PagamentoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SARTA', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
     public List<PagamentoResponse> tutti() {
         return pagamentoService.trovaTutti().stream()
                 .map(this::toResponse)

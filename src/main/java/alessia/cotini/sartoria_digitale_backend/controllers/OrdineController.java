@@ -74,7 +74,7 @@ public class OrdineController {
     }
 
     @GetMapping("/assegnati")
-    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO')")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
     public List<OrdineResponse> assegnatiAme(@AuthenticationPrincipal Utente autenticato) {
         return ordineService.trovaAssegnati(autenticato.getId()).stream()
                 .map(this::toResponse)
@@ -82,7 +82,7 @@ public class OrdineController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SARTA', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
     public List<OrdineResponse> tutti() {
         return ordineService.trovaTutti().stream()
                 .map(this::toResponse)
@@ -90,7 +90,7 @@ public class OrdineController {
     }
 
     @PatchMapping("/{id}/assegna")
-    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO')")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
     public OrdineResponse assegnaAme(@PathVariable UUID id, @AuthenticationPrincipal Utente autenticato) {
         return toResponse(ordineService.assegna(id, autenticato));
     }
@@ -105,7 +105,7 @@ public class OrdineController {
 
     @PostMapping("/negozio")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO')")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
     public OrdineResponse creaPerClienteNegozio(@RequestBody @Valid CreazioneOrdineNegozioRequest request,
                                                 @AuthenticationPrincipal Utente autenticato) {
         return toResponse(ordineService.creaOrdineNegozio(request, autenticato));

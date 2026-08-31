@@ -55,7 +55,7 @@ public class AppuntamentoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('SARTA', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SARTA', 'SOTTOPOSTO', 'SUPER_ADMIN')")
     public List<AppuntamentoResponse> tutti() {
         return appuntamentoService.trovaTutti().stream()
                 .map(this::toResponse).collect(Collectors.toList());
